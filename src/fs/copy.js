@@ -1,16 +1,17 @@
-import { cp } from 'node:fs/promises';
-import { isDirOrFileExist } from '../helpers/helpers.js';
+import { cp } from 'fs/promises';
+import { getPath, isDirOrFileExist } from '../helpers/helpers.js';
 import { FS_ERROR_MESSAGE } from '../constants/constants.js';
+
+const sourcePath = getPath(import.meta.url, 'files');
+const destinationPath = getPath(import.meta.url, 'files_copy');
 
 const copy = async () => {
   try {
-    const sourceUrl = new URL('./files', import.meta.url);
-    const destinationUrl = new URL('./files_copy', import.meta.url);
-    const isDestinationDirExist = await isDirOrFileExist(destinationUrl);
+    const isDestinationDirExist = await isDirOrFileExist(destinationPath);
 
     if (isDestinationDirExist) throw new Error('Destination folder exist');
 
-    await cp(sourceUrl, destinationUrl, {
+    await cp(sourcePath, destinationPath, {
       recursive: true,
       force: false,
       errorOnExist: true,

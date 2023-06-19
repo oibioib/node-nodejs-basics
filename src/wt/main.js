@@ -1,14 +1,19 @@
 import { cpus } from 'os';
 import { Worker } from 'worker_threads';
+import { getPath } from '../helpers/helpers.js';
 
-const createWorkers = (workersNumber, workerUrl, workerStartData) => {
+const cpuCores = cpus().length;
+const workerPath = getPath(import.meta.url, 'worker.js');
+const workerStartData = 10;
+
+const createWorkers = (workersNumber, workerPath, workerStartData) => {
   const workerPromises = [];
 
   for (let i = 0; i < workersNumber; i += 1) {
     workerPromises.push(
       new Promise((resolve, reject) => {
         const workerData = workerStartData + i;
-        const worker = new Worker(workerUrl, { workerData });
+        const worker = new Worker(workerPath, { workerData });
         worker.on('message', resolve);
         worker.on('error', reject);
       })
@@ -39,15 +44,11 @@ const checkWorkersResults = (workersResults) => {
 };
 
 const performCalculations = async () => {
-  const workerUrl = new URL('./worker.js', import.meta.url);
-  const cpuCores = cpus().length;
-  const workerStartData = 10;
-
-  const workers = createWorkers(cpuCores, workerUrl, workerStartData);
+  const workers = createWorkers(cpuCores, workerPath, workerStartData);
   const workersResults = await Promise.allSettled(workers);
-  const result = checkWorkersResults(workersResults);
+  const output = checkWorkersResults(workersResults);
 
-  console.log(result);
+  console.log(output);
 };
 
 await performCalculations();

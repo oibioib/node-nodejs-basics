@@ -1,8 +1,16 @@
-import { access, constants } from 'node:fs/promises';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { access, constants } from 'fs/promises';
 
-export const isDirOrFileExist = async (url) => {
+export const getPath = (importMetaUrl, ...args) => {
+  const __dirname = dirname(fileURLToPath(importMetaUrl));
+  const path = join(__dirname, ...args);
+  return path;
+};
+
+export const isDirOrFileExist = async (path) => {
   try {
-    await access(url, constants.R_OK);
+    await access(path, constants.R_OK);
     return true;
   } catch (error) {
     return false;

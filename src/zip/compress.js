@@ -1,19 +1,24 @@
 import { createReadStream, createWriteStream } from 'fs';
-import { ZLIB_ERROR_COMPRESS } from '../constants/constants.js';
 import { createGzip } from 'zlib';
+import { getPath, isDirOrFileExist } from '../helpers/helpers.js';
+import { ZLIB_ERROR_COMPRESS } from '../constants/constants.js';
+
+const fileToCompressPath = getPath(import.meta.url, 'files', 'fileToCompress.txt');
+const archivePath = getPath(import.meta.url, 'files', 'archive.gz');
 
 const compress = async () => {
   try {
-    const fileToCompressUrl = new URL('./files/fileToCompress.txt', import.meta.url);
-    const archiveUrl = new URL('./files/archive.gz', import.meta.url);
+    const isFileToCompressExist = await isDirOrFileExist(fileToCompressPath);
 
-    const fileToCompress = createReadStream(fileToCompressUrl);
-    const archive = createWriteStream(archiveUrl);
+    if (!isFileToCompressExist) throw new Error('File to compress does not exist');
+
+    const fileToCompress = createReadStream(fileToCompressPath);
+    const archive = createWriteStream(archivePath);
     const gzip = createGzip();
 
     fileToCompress.pipe(gzip).pipe(archive);
-  } catch {
-    throw new Error(ZLIB_ERROR_COMPRESS);
+  } catch (error) {
+    throw new Error(`${ZLIB_ERROR_COMPRESS}. ${error.message}.`);
   }
 };
 

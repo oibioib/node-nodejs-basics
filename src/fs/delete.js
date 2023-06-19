@@ -1,10 +1,12 @@
-import { rm } from 'node:fs/promises';
+import { rm } from 'fs/promises';
+import { getPath } from '../helpers/helpers.js';
 import { FS_ERROR_MESSAGE } from '../constants/constants.js';
+
+const filePath = getPath(import.meta.url, 'files', 'fileToRemove.txt');
 
 const remove = async () => {
   try {
-    const fileUrl = new URL('./files/fileToRemove.txt', import.meta.url);
-    await rm(fileUrl);
+    await rm(filePath);
   } catch {
     throw new Error(FS_ERROR_MESSAGE);
   }

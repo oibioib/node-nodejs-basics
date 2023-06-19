@@ -1,8 +1,10 @@
-import { fork } from 'node:child_process';
+import { fork } from 'child_process';
+import { getPath } from '../helpers/helpers.js';
+
+const childScriptPath = getPath(import.meta.url, 'files', 'script.js');
 
 const spawnChildProcess = async (args) => {
-  const fileUrl = new URL('./files/script.js', import.meta.url);
-  fork(fileUrl, args);
+  fork(childScriptPath, args);
 };
 
 spawnChildProcess(['arg1', 'arg2', 12, 34]);

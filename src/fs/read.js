@@ -1,10 +1,12 @@
-import { readFile } from 'node:fs/promises';
+import { readFile } from 'fs/promises';
+import { getPath } from '../helpers/helpers.js';
 import { FS_ERROR_MESSAGE } from '../constants/constants.js';
+
+const filePath = getPath(import.meta.url, 'files', 'fileToRead.txt');
 
 const read = async () => {
   try {
-    const fileUrl = new URL('./files/fileToRead.txt', import.meta.url);
-    const fileContent = await readFile(fileUrl, 'utf8');
+    const fileContent = await readFile(filePath, 'utf8');
     console.log(fileContent);
   } catch {
     throw new Error(FS_ERROR_MESSAGE);

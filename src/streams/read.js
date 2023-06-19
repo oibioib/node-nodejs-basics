@@ -1,10 +1,12 @@
 import { createReadStream } from 'fs';
 import { stdout } from 'process';
+import { getPath } from '../helpers/helpers.js';
 import { FS_ERROR_MESSAGE } from '../constants/constants.js';
 
+const fileToReadPath = getPath(import.meta.url, 'files', 'fileToRead.txt');
+
 const read = async () => {
-  const fileUrl = new URL('./files/fileToRead.txt', import.meta.url);
-  const stream = createReadStream(fileUrl);
+  const stream = createReadStream(fileToReadPath);
 
   stream.pipe(stdout);
 
